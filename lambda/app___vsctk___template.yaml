@@ -1,0 +1,9 @@
+Resources:
+  vtotal:
+    Type: 'AWS::Serverless::Function'
+    Properties:
+      Handler: virus_total.lambda_handler
+      CodeUri: /Users/jason/scripts/vtotal
+      Runtime: python3.8
+      Environment:
+        Variables: {}
