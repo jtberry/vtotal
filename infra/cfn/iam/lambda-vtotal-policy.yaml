@@ -1,0 +1,35 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Policy for lambda to execute the vtotal check"
+Parameters:
+  PolicyName:
+    Type: String
+    Description: "Name for the policy"
+    Default: "lambda-policy"
+Resources:
+  LambdaVTtotalSecretPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: !Ref PolicyName
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement: 
+          - Effect: Allow
+            Action:
+            - "secretsmanager:GetResourcePolicy"
+            - "secretsmanager:GetSecretValue"
+            - "secretsmanager:DescribeSecret"
+            - "secretsmanager:ListSecretVersionIds"
+            - "secretsmanager:ListSecrets"
+            Resource: "arn:aws:secretsmanager:us-west-2:307305615382:secret:vtotalapikey*"
+          - Effect: Allow
+            Action: 
+            - "sqs:ReceiveMessage"
+            - "sqs:DeleteMessage"
+            - "sqs:GetQueueAttributes"
+            - "logs:CreateLogGroup"
+            - "logs:CreateLogStream"
+            - "logs:PutLogEvents"
+            Resource: "arn:aws:sqs:us-west-2:307305615382:virus-total-hash-sqs"
+Outputs:
+  PolicyURL:
+    Value: LambdaVTtotalSecretPolicy

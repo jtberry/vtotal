@@ -1,0 +1,21 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "This is the template for creating the SQS for hash scan with virus total"
+Parameters:
+  SQSName:
+    Type: "String"
+    Description: "Name of the Queue"
+    Default: "virus-total-hash-sqs"
+Resources:
+  SomeSQS:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Ref SQSName
+Outputs:
+  QueueURL:
+    Value: SomeSQS
+  QueueARN:
+    Value:
+      Fn::GetAtt:
+       - "SomeSQS"
+       - "Arn"
+      
