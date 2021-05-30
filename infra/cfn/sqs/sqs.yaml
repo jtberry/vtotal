@@ -6,16 +6,16 @@ Parameters:
     Description: "Name of the Queue"
     Default: "virus-total-hash-sqs"
 Resources:
-  SomeSQS:
+  VTotalSQS:
     Type: AWS::SQS::Queue
     Properties:
       QueueName: !Ref SQSName
 Outputs:
   QueueURL:
-    Value: SomeSQS
+    Value: VTotalSQS
   QueueARN:
     Value:
       Fn::GetAtt:
-       - "SomeSQS"
+       - "VTotalSQS"
        - "Arn"
       
