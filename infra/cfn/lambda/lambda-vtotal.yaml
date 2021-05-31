@@ -5,6 +5,10 @@ Parameters:
         Type: String
         Description: "Name to provide the lambda"
         Default: "vtotal-lambda"
+    SQSName:
+        Type: "String"
+        Description: "Name of the Queue"
+        Default: "virus-total-hash-sqs"
 Resources:
     LambdaRole:
         Type: AWS::IAM::Role
@@ -54,6 +58,17 @@ Resources:
                           - "logs:CreateLogStream"
                           - "logs:PutLogEvents"
                           Resource: "arn:aws:sqs:us-west-2:307305615382:virus-total-hash-sqs"
+    VTotalSQS:
+        Type: AWS::SQS::Queue
+        Properties:
+            QueueName: !Ref SQSName
+    LambdaSQSTrigger:
+        Type: AWS::Lambda::EventSourceMapping
+        Properties:
+            BatchSize: 10
+            Enabled: true
+            EventSourceArn: !GetAtt VTotalSQS.Arn
+            FunctionName: !GetAtt LambdaFunction.Arn
     LambdaFunction:
         Type: AWS::Lambda::Function
         Properties:
@@ -63,4 +78,14 @@ Resources:
             Handler: virus_total.lambda_handler
             Role: !GetAtt LambdaRole.Arn
             Runtime: python3.8
-            Timeout: 60
+            Timeout: 15
+Outputs:
+    QueueURL:
+        Value: VTotalSQS
+    QueueARN:
+        Value:
+            Fn::GetAtt:
+                - "VTotalSQS"
+                - "Arn"
+        Export: 
+            Name: !Sub '${AWS::StackName}-ARN'
