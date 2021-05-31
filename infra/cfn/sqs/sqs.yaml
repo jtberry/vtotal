@@ -18,4 +18,6 @@ Outputs:
       Fn::GetAtt:
        - "VTotalSQS"
        - "Arn"
+    Export: 
+      Name: !Sub '${AWS::StackName}-ARN'
       

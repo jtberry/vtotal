@@ -1,0 +1,66 @@
+AWSTemplateFormatVersion : 2010-09-09
+Description: "CFN Template for launching the vtotal lambda"
+Parameters:
+    LambdaName:
+        Type: String
+        Description: "Name to provide the lambda"
+        Default: "vtotal-lambda"
+Resources:
+    LambdaRole:
+        Type: AWS::IAM::Role
+        Properties:
+            AssumeRolePolicyDocument:
+                Version: '2012-10-17'
+                Statement:
+                - Effect: Allow
+                  Principal:
+                    Service:
+                    - lambda.amazonaws.com
+                  Action:
+                  - sts:AssumeRole
+            Policies:
+                - PolicyName: allowLogs
+                  PolicyDocument:
+                    Version: "2012-10-17"
+                    Statement:
+                    -   Effect: Allow
+                        Action:
+                        - "logs:CreateLogGroup"
+                        - "logs:CreateLogStream"
+                        - "logs:PutLogEvents"
+                        Resource: "*"
+                -  PolicyName: getApiKey
+                   PolicyDocument:
+                      Version: "2012-10-17"
+                      Statement: 
+                        - Effect: Allow
+                          Action:
+                          - "secretsmanager:GetResourcePolicy"
+                          - "secretsmanager:GetSecretValue"
+                          - "secretsmanager:DescribeSecret"
+                          - "secretsmanager:ListSecretVersionIds"
+                          - "secretsmanager:ListSecrets"
+                          Resource: "arn:aws:secretsmanager:us-west-2:307305615382:secret:vtotalapikey*"
+                -   PolicyName: allowSQS
+                    PolicyDocument:
+                        Version: "2012-10-17"
+                        Statement: 
+                        - Effect: Allow
+                          Action: 
+                          - "sqs:ReceiveMessage"
+                          - "sqs:DeleteMessage"
+                          - "sqs:GetQueueAttributes"
+                          - "logs:CreateLogGroup"
+                          - "logs:CreateLogStream"
+                          - "logs:PutLogEvents"
+                          Resource: "arn:aws:sqs:us-west-2:307305615382:virus-total-hash-sqs"
+    LambdaFunction:
+        Type: AWS::Lambda::Function
+        Properties:
+            Code:
+                S3Bucket: logging-all-the-thingz
+                S3Key: lambda/virus-total.zip
+            Handler: virus_total.lambda_handler
+            Role: !GetAtt LambdaRole.Arn
+            Runtime: python3.8
+            Timeout: 60

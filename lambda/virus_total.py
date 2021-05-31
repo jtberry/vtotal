@@ -1,52 +1,78 @@
-
-import os
 import requests
 from pprint import pprint
+import json
+import boto3
+import base64
+import logging
+from botocore.exceptions import ClientError
 
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
-def lambda_handler(event, context):
-    print('## ENVIRONMENT VARIABLES')
-    print(os.environ)
+def get_secret():
+    secret_name = "vtotalapikey"
+    region_name = "us-west-2"   
 
+    # Create a Secrets Manager client
+    session = boto3.session.Session()
+    client = session.client(
+        service_name='secretsmanager',
+        region_name=region_name
+    )
+    
+    try:
+        get_secret_value_response = client.get_secret_value(
+            SecretId=secret_name
+        )
+    except ClientError as e:
+        if e.response['Error']['Code'] == 'DecryptionFailureException':
+            # Secrets Manager can't decrypt the protected secret text using the provided KMS key.
+            # Deal with the exception here, and/or rethrow at your discretion.
+            raise e
+        elif e.response['Error']['Code'] == 'InternalServiceErrorException':
+            # An error occurred on the server side.
+            # Deal with the exception here, and/or rethrow at your discretion.
+            raise e
+        elif e.response['Error']['Code'] == 'InvalidParameterException':
+            # You provided an invalid value for a parameter.
+            # Deal with the exception here, and/or rethrow at your discretion.
+            raise e
+        elif e.response['Error']['Code'] == 'InvalidRequestException':
+            # You provided a parameter value that is not valid for the current state of the resource.
+            # Deal with the exception here, and/or rethrow at your discretion.
+            raise e
+        elif e.response['Error']['Code'] == 'ResourceNotFoundException':
+            # We can't find the resource that you asked for.
+            # Deal with the exception here, and/or rethrow at your discretion.
+            raise e
+    else:
+        # Decrypts secret using the associated KMS CMK.
+        # Depending on whether the secret is a string or binary, one of these fields will be populated.
+        if 'SecretString' in get_secret_value_response:
+            secret = get_secret_value_response['SecretString']
+            return secret
+        else:
+            decoded_binary_secret = base64.b64decode(get_secret_value_response['SecretBinary'])
+            return decoded_binary_secret
+
+def file_results(hash):
+    """
+    This is the function that takes the file hash and queries Virus
+    Total to see the findings
+    """
+    secretValue = json.loads(get_secret())
     url = 'https://www.virustotal.com/vtapi/v2/file/report'
-    api_key = '4939dfcf824fb64580a1cac7400d826bada6264dca09270dcf4c9cf8a2ac0645'
-
-    file = '9f101483662fc071b7c10f81c64bb34491ca4a877191d464ff46fd94c7247115'
-    header = {'apikey':api_key, 'resource': file}
+    api_key = secretValue['vtotal_api_key']
+    header = {'apikey':api_key, 'resource': hash}
     response = requests.get(url ,params=header)
     status = response.status_code
     if status != 200:
         print('Something bad has happened...')
     else:
-        pprint(response.json())
+        results = response.json()
+        pprint(results)
         
+def lambda_handler(event, context):
+    hash = event['Records'][0]['body']['hash']
 
-    print('## EVENT')
-    print(event)
-# v = virus_total()
-# v.scanfile()
-
-# #!/usr/bin/python3
-
-# import requests
-# from pprint import pprint
-
-# class virus_total(object):
-#     def __init__(self):
-#         self.url = 'https://www.virustotal.com/vtapi/v2/file/report'
-#         self.api_key = '4939dfcf824fb64580a1cac7400d826bada6264dca09270dcf4c9cf8a2ac0645'
-
-#     def scanfile(self):
-#         file = '9f101483662fc071b7c10f81c64bb34491ca4a877191d464ff46fd94c7247115'
-#         header = {'apikey':self.api_key, 'resource': file}
-#         response = requests.get(self.url ,params=header)
-#         status = response.status_code
-#         if status != 200:
-#             print('Something bad has happened...')
-#         else:
-#             pprint(response.json())
-        
-
-
-# v = virus_total()
-# v.scanfile()
+    file_results(hash)

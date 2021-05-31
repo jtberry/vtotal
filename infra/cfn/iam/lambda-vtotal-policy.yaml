@@ -30,6 +30,14 @@ Resources:
             - "logs:CreateLogStream"
             - "logs:PutLogEvents"
             Resource: "arn:aws:sqs:us-west-2:307305615382:virus-total-hash-sqs"
+          - Effect: Allow
+            Action:
+            - "logs:CreateLogGroup"
+            - "logs:CreateLogStream"
+            - "logs:PutLogEvents"
+            Resource: "*"
 Outputs:
-  PolicyURL:
+  PolicyName:
     Value: LambdaVTtotalSecretPolicy
+    Export:
+      Name: !Sub '${AWS::StackName}-Name'
