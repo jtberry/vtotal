@@ -12,7 +12,7 @@ Resources:
       ManagedPolicyName: !Ref PolicyName
       PolicyDocument:
         Version: "2012-10-17"
-        Statement: 
+        Statement:
           - Effect: Allow
             Action:
             - "secretsmanager:GetResourcePolicy"
@@ -22,7 +22,7 @@ Resources:
             - "secretsmanager:ListSecrets"
             Resource: "arn:aws:secretsmanager:us-west-2:307305615382:secret:vtotalapikey*"
           - Effect: Allow
-            Action: 
+            Action:
             - "sqs:ReceiveMessage"
             - "sqs:DeleteMessage"
             - "sqs:GetQueueAttributes"
