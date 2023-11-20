@@ -1,3 +1,5 @@
+[![Trivy_Scan](https://github.com/jtberry/vtotal/actions/workflows/trivy.yaml/badge.svg)](https://github.com/jtberry/vtotal/actions/workflows/trivy.yaml)
+
 # Virus Total
 
 ## Purpose
