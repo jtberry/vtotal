@@ -11,7 +11,7 @@ logger.setLevel(logging.INFO)
 
 def get_secret():
     secret_name = "vtotalapikey"
-    region_name = "us-west-2"   
+    region_name = "us-west-2"
 
     # Create a Secrets Manager client
     session = boto3.session.Session()
@@ -19,7 +19,7 @@ def get_secret():
         service_name='secretsmanager',
         region_name=region_name
     )
-    
+
     try:
         get_secret_value_response = client.get_secret_value(
             SecretId=secret_name
@@ -71,7 +71,7 @@ def file_results(hash):
     else:
         results = response.json()
         pprint(results)
-        
+
 def lambda_handler(event, context):
     hash = event['Records'][0]['body']['hash']
 

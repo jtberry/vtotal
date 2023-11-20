@@ -36,7 +36,7 @@ Resources:
                 -  PolicyName: getApiKey
                    PolicyDocument:
                       Version: "2012-10-17"
-                      Statement: 
+                      Statement:
                         - Effect: Allow
                           Action:
                           - "secretsmanager:GetResourcePolicy"
@@ -48,9 +48,9 @@ Resources:
                 -   PolicyName: allowSQS
                     PolicyDocument:
                         Version: "2012-10-17"
-                        Statement: 
+                        Statement:
                         - Effect: Allow
-                          Action: 
+                          Action:
                           - "sqs:ReceiveMessage"
                           - "sqs:DeleteMessage"
                           - "sqs:GetQueueAttributes"
@@ -87,5 +87,5 @@ Outputs:
             Fn::GetAtt:
                 - "VTotalSQS"
                 - "Arn"
-        Export: 
+        Export:
             Name: !Sub '${AWS::StackName}-ARN'
