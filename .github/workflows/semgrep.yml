@@ -10,6 +10,8 @@ on:
   # random HH:MM to avoid a load spike on GitHub Actions at 00:00
   - cron: 33 10 * * *
 name: Semgrep
+permissions: 
+  security-events: write
 jobs:
   semgrep:
     name: semgrep/ci
@@ -20,11 +22,7 @@ jobs:
       image: returntocorp/semgrep
     steps:
     - uses: actions/checkout@v3
-      with:
-        publishToken: ${{ secrets.SEMGREP_APP_TOKEN }}
-        publishDeployment: ${{ secrets.SEMGREP_DEPLOYMENT_ID }}
-        generateSarif: "1"
-    - run: semgrep ci
+    - run: semgrep ci --sarif > semgrep.sarif
 
     # Upload SARIF file generated in previous step
     - name: Upload SARIF file

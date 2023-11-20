@@ -1,4 +1,5 @@
 [![Trivy_Scan](https://github.com/jtberry/vtotal/actions/workflows/trivy.yaml/badge.svg)](https://github.com/jtberry/vtotal/actions/workflows/trivy.yaml)
+[![Semgrep](https://github.com/jtberry/vtotal/actions/workflows/semgrep.yml/badge.svg)](https://github.com/jtberry/vtotal/actions/workflows/semgrep.yml)
 
 # Virus Total
 
