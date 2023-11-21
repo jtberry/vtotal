@@ -47,8 +47,9 @@ Not sure how will ingest the has data, not sure if will build a full flask or ht
 * [ ] - terraform for sqs
 * [ ] - terraform for lambda
 * [ ] - terraform for iam policies
-* [ ] - Github ACtion for IaC
-* [ ] - Github action for Semgrep
+* [x] - Github ACtion for IaC
+* [x] - Github action for Semgrep
+* [ ] - Test functionality in AWS
 
 
 Lambda to scan with yara files
