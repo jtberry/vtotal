@@ -3,6 +3,8 @@
 
 # Virus Total
 
+NOTE:  Picking project back up, moved project into a YARA scanning project. Will update and complete this to read from S3 file upload and log results.
+
 ## Purpose
 Configuring a python script to use the Virus Total api. Will then move to Lambda to have run when a file is uploaded to s3.
 
@@ -14,6 +16,7 @@ This will let you create the package for you lambda. Since we have to import req
 >$ cd your_folder_name
 >$ ls
 >virus_total.py
+>$ mkdir package
 >$ pip3 install --target ./package >requests
 >$ cd package
 >$ zip -r ../virus-total.zip .
